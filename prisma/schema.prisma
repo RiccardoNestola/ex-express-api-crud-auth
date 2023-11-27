@@ -37,3 +37,13 @@ model Tag {
   name  String @unique
   posts Post[] // relazione molti a molti con Post
 }
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String
+  role      String   @default("user")
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

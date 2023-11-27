@@ -1,20 +1,22 @@
 /* Esercizio
-per l’esercizio di oggi, partendo dal lavoro svolto ieri, aggiungeremo i seguenti modelli con le relative relazioni col modello Post:
-Category(one - to - many): Ogni Post deve avere una categoria associata, e una categoria può avere più Post associati.
-    Tags(many - to - many): Ogni Post può avere uno o più tag associati, e ogni Tag può avere uno o più Post associati.
-        Successivamente, aggiungete la validazione dei dati utilizzando Express Validator alle rotte del vostro blog.
-            Infine, assicuratevi che le richieste di lettura GET restituiscano anche la categoria e i tags di ogni singolo Post.
-Piccolo suggerimento: Se avete già popolato la tabella dei posts indicate il campo categoryId come nullable o un valore di default altrimenti avreste un errore in fase di migrazione.
-    BONUS:
-Implementare le operazioni di CRUD per il modello Category.
-Implementare le operazioni di CRUD per il modello Tag.
-Implementare le validazioni tramite Schema e middleware dedicato.
- */
+Partendo dall’esercizio di ieri, aggiungiamo l’autenticazione al nostro progetto!
 
+-Create tutto il necessario(Model, Controller, rotte e validazioni) per implementare le due funzionalità principali:
+-Creazione nuovo utente: rotta POST / register
+-Login utente: rotta POST / login
+
+-Proteggete, attraverso un middleware che verifichi il token JWT passato nell’header della richiesta, le rotte di creazione, modifica e cancellazione della risorsa Post.
+
+Aggiungete la policy CORS per consentire a qualunque dominio di accedere alle API(tanto siamo in locale
+    BONUS:
+Aggiungete una relazione one - to - many fra i modelli User e Post.
+Aggiungete un middleware che verifichi che un utente possa modificare o cancellare solo i Post a lui associati, altrimenti restituisca un errore 403. */
 
 const express = require("express");
 const dotenv = require("dotenv");
 const postsRouter = require("./routers/posts");
+const authRouter = require("./routers/auth");
+
 /* const errorsHandler = require("./middlewares/errorsHandler");
 const routeNotFound = require("./middlewares/routeNotFound");
  */
@@ -27,13 +29,14 @@ app.use(express.json()); // Per parsing di JSON
 
 // registro le rotte per i posts
 app.use("/posts", postsRouter);
+app.use("", authRouter) // registriamo le rotte senza alcun prefisso
 
 //errori
 /* app.use(routeNotFound);
 
 app.use(errorsHandler); */
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {
     console.log(`Server in ascolto su http://localhost:${PORT}`);
 });
