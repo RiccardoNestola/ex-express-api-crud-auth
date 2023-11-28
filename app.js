@@ -14,6 +14,7 @@ Aggiungete un middleware che verifichi che un utente possa modificare o cancella
 
 const express = require("express");
 const dotenv = require("dotenv");
+const cors = require("cors");
 const postsRouter = require("./routers/posts");
 const authRouter = require("./routers/auth");
 
@@ -27,9 +28,14 @@ dotenv.config();
 
 app.use(express.json()); // Per parsing di JSON
 
+//cors
+app.use(cors());
+
 // registro le rotte per i posts
 app.use("/posts", postsRouter);
 app.use("", authRouter) // registriamo le rotte senza alcun prefisso
+
+
 
 //errori
 /* app.use(routeNotFound);
