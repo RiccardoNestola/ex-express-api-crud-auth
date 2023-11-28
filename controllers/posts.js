@@ -21,6 +21,10 @@ async function show(req, res, next) {
       where: {
         slug: slug,
       },
+      include: {
+        tags: true,
+        category: true
+      }
     });
     
     if (!data) {
@@ -43,13 +47,19 @@ async function store(req, res, next) {
     );
   }
 
+
+
   const datiInIngresso = req.body;
   console.log(datiInIngresso);
 
-/*   if (!datiInIngresso || !datiInIngresso.title) {
+  if (!datiInIngresso || !datiInIngresso.title) {
     return res.status(400).send("Titolo del post mancante o dati di ingresso non validi");
   }
- */
+
+/*   if (!Array.isArray(datiInIngresso.tags)) {
+    return res.status(400).send("I tag devono essere un array");
+  } */
+
   const UniqueSlug = createUniqueSlug(datiInIngresso.title);
 
   try {
@@ -60,11 +70,27 @@ async function store(req, res, next) {
         image: datiInIngresso.image,
         content: datiInIngresso.content,
         published: datiInIngresso.published,
+        categoryId: datiInIngresso.categoryId,
+      
+        /* userId: datiInIngresso.userId, */
+       /*  tags: {
+          create: datiInIngresso.tags.map((idTags) => ({
+            name: idTags,
+          })),
+        } */},
+      
+      include: {
+        tags: true,
+        category: true
       }
-    });
+      
+      
+      
+      });
 
     return res.json(newPost);
   } catch (error) {
+    console.error(error)
     return res.status(500).send("Errore durante la creazione del post");
   }
 }

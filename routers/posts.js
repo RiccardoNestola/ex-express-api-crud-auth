@@ -14,17 +14,17 @@ router.get('/:slug', postsController.show);
 // POST /posts
 router.post(
     '/',
-    authenticateToken,
+    /* authenticateToken */
     body('title').notEmpty().withMessage('Il titolo è richiesto'),
     body('content').notEmpty().withMessage('Il contenuto è richiesto'),
     postsController.store
     );
 
 // PUT /posts/:id
-router.put('/:id', authenticateToken, postsController.update);
+router.put('/:id', /* authenticateToken */ postsController.update);
 
 // DELETE /posts/:id
-router.delete('/:id', authenticateToken, postsController.destroy);
+router.delete('/:id', /* authenticateToken */ postsController.destroy);
 
 
 module.exports = router;
