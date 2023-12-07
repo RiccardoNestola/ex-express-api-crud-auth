@@ -26,11 +26,11 @@ async function show(req, res, next) {
         category: true
       }
     });
-    
+
     if (!data) {
       throw new Error("Post not found");
     }
-    
+
     return res.json(data);
   } catch (error) {
     next(error);
@@ -56,9 +56,9 @@ async function store(req, res, next) {
     return res.status(400).send("Titolo del post mancante o dati di ingresso non validi");
   }
 
-/*   if (!Array.isArray(datiInIngresso.tags)) {
-    return res.status(400).send("I tag devono essere un array");
-  } */
+  /*   if (!Array.isArray(datiInIngresso.tags)) {
+      return res.status(400).send("I tag devono essere un array");
+    } */
 
   const UniqueSlug = createUniqueSlug(datiInIngresso.title);
 
@@ -70,27 +70,24 @@ async function store(req, res, next) {
         image: datiInIngresso.image,
         content: datiInIngresso.content,
         published: datiInIngresso.published,
-        categoryId: datiInIngresso.categoryId,
-      
-        /* userId: datiInIngresso.userId, */
-       /*  tags: {
-          create: datiInIngresso.tags.map((idTags) => ({
-            name: idTags,
+        /* categoryId: datiInIngresso.categoryId, */
+
+        tags: {
+          connectOrCreate: datiInIngresso.tags.map(tagName => ({
+            where: { name: tagName },
+            create: { name: tagName }
           })),
-        } */},
-      
+        },
+      },
       include: {
         tags: true,
         category: true
       }
-      
-      
-      
-      });
+    });
 
     return res.json(newPost);
   } catch (error) {
-    console.error(error)
+    console.error(error.message)
     return res.status(500).send("Errore durante la creazione del post");
   }
 }

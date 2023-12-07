@@ -34,7 +34,7 @@ model Category {
 
 model Tag {
   id    Int    @id @default(autoincrement())
-  name  String @db.VarChar(100)
+  name  String @unique @db.VarChar(100)
   posts Post[] // relazione molti a molti con Post
 }
 
