@@ -7,6 +7,11 @@ const { validationResult } = require("express-validator");
 async function index(req, res) {
 
   const data = await prisma.post.findMany({
+
+    include: {
+      tags: true,
+      category: true
+    }
   });
 
   return res.json(data);
