@@ -100,33 +100,37 @@ async function store(req, res, next) {
 
 async function update(req, res) {
   const { id } = req.params;
-  const datiInIngresso = req.body;
-
-  console.log("Id ricevuto:", id);
-  console.log("Dati in ingresso:", datiInIngresso);
+  const { title, image, content, published, tags } = req.body;
 
   try {
-    const post = await prisma.post.findUnique({
-      where: {
-        id: parseInt(id),
-      },
-    });
+    let uniqueSlug = createUniqueSlug(title);
 
-    console.log("Post trovato:", post);
 
-    if (!post) {
-      console.error('Post non trovato per:', id);
-      return res.status(404).send('Not found');
+    const existingPost = await prisma.post.findUnique({ where: { slug: uniqueSlug } });
+    if (existingPost && existingPost.id !== parseInt(id)) {
+      throw new Error('Slug già in uso');
     }
 
-    const postAggiornato = await prisma.post.update({
-      data: datiInIngresso,
-      where: {
-        id: parseInt(id),
-      },
-    });
 
-    console.log("Post aggiornato:", postAggiornato);
+    const tagConnectOrCreate = tags.map(tagName => ({
+      where: { name: tagName },
+      create: { name: tagName }
+    }));
+
+    const postAggiornato = await prisma.post.update({
+      where: { id: parseInt(id) },
+      data: {
+        title,
+        slug: uniqueSlug,
+        image,
+        content,
+        published,
+        tags: {
+          set: [],
+          connectOrCreate: tagConnectOrCreate
+        }
+      }
+    });
 
     return res.json(postAggiornato);
   } catch (error) {
@@ -134,6 +138,8 @@ async function update(req, res) {
     return res.status(500).send('Errore interno del server');
   }
 }
+
+
 
 
 async function destroy(req, res) {
